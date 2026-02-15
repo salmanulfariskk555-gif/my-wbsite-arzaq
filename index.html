@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surprise for Nobel Joy | 25th Birthday</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Poppins:wght@300;400;600&display=swap');
+
+        body {
+            margin: 0; height: 100vh; display: flex; justify-content: center; align-items: center;
+            background: radial-gradient(circle, #1a1a2e, #16213e, #0f0f1b);
+            color: white; font-family: 'Poppins', sans-serif; overflow: hidden;
+        }
+
+        /* --- STAGE 1: THE VIBRANT GIFT BOX --- */
+        .box-container { text-align: center; cursor: pointer; z-index: 100; transition: 0.5s; }
+        .box {
+            width: 180px; height: 180px; background: #ff4757; position: relative;
+            margin: 0 auto; border-radius: 8px; box-shadow: 0 20px 60px rgba(255, 71, 87, 0.4);
+        }
+        .box::after { content: ''; position: absolute; width: 35px; height: 100%; background: #ffd700; left: 72.5px; }
+        .box::before { content: ''; position: absolute; width: 100%; height: 35px; background: #ffd700; top: 72.5px; }
+        .lid {
+            width: 200px; height: 45px; background: #ff4757; border: 3px solid #ffd700;
+            position: absolute; top: -15px; left: -10px; transition: 0.8s; z-index: 2; border-radius: 5px;
+        }
+
+        /* --- STAGE 2: THE CELEBRATION CAKE --- */
+        #cake-stage { display: none; flex-direction: column; align-items: center; text-align: center; }
+        .cake {
+            width: 250px; height: 150px; background: #ffffff; border-radius: 20px 20px 0 0;
+            position: relative; cursor: pointer; margin-top: 40px; box-shadow: 0 0 40px rgba(255,255,255,0.2);
+        }
+        .icing {
+            width: 100%; height: 50px; background: #70a1ff; border-radius: 20px 20px 0 0;
+            background: linear-gradient(45deg, #70a1ff, #2f3542);
+        }
+        .candle-container { position: absolute; top: -70px; left: 50%; transform: translateX(-50%); }
+        .number-25 {
+            font-size: 65px; font-weight: 900; color: #fff;
+            text-shadow: 0 0 20px #ff4757, 0 0 40px #ff4757;
+            animation: bounce 1s infinite alternate;
+        }
+
+        /* --- STAGE 3: THE FINAL SURPRISE & MESSAGE --- */
+        #final-reveal { display: none; text-align: center; width: 90%; max-width: 600px; animation: popIn 1s forwards; }
+        .celebration-name {
+            font-family: 'Montserrat', sans-serif; font-size: 4rem; margin: 0;
+            background: linear-gradient(45deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            text-transform: uppercase; letter-spacing: 2px;
+        }
+        .message-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 20px;
+            margin-top: 25px;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .message-card p { font-size: 1.1rem; line-height: 1.6; color: #f1f1f1; margin: 0; }
+        .age-badge { background: #ffd700; color: #000; padding: 5px 20px; font-weight: bold; border-radius: 50px; display: inline-block; margin-bottom: 10px; }
+
+        @keyframes bounce { from { transform: translateX(-50%) translateY(0); } to { transform: translateX(-50%) translateY(-15px); } }
+        @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <div class="box-container" id="box-scene" onclick="openBox()">
+        <div class="box"><div class="lid" id="lid"></div></div>
+        <h2 style="color: #ffd700; margin-top: 40px; text-shadow: 0 0 10px rgba(255,215,0,0.5);">A SPECIAL GIFT FOR NOBEL JOY 🎁</h2>
+    </div>
+
+    <div id="cake-stage" onclick="cutCake()">
+        <div class="candle-container"><div class="number-25">25</div></div>
+        <div class="cake"><div class="icing"></div></div>
+        <h2 style="color: white; margin-top: 40px;">24 was Great, but 25 is going to be Iconic! ✨</h2>
+        <p style="color: #70a1ff; font-weight: 600;">TAP TO CUT THE CAKE</p>
+    </div>
+
+    <div id="final-reveal">
+        <div class="age-badge">CHAPTER 25</div>
+        <div style="color: white; letter-spacing: 10px; font-size: 1.2rem; font-weight: bold;">HAPPY BIRTHDAY</div>
+        <h1 class="celebration-name">NOBEL JOY</h1>
+
+        <div class="message-card">
+            <p>
+                "Wishing you a magnificent 25th birthday! You've achieved so much at 24,
+                and we can't wait to see the magic you create this year.
+                May your day be filled with laughter, success, and endless joy.
+                Keep inspiring us!" 🚀✨
+            </p>
+        </div>
+        <p style="color: #ffd700; margin-top: 20px; font-weight: bold;">Enjoy your day to the fullest!</p>
+    </div>
+
+    <script>
+        function openBox() {
+            document.getElementById('lid').style.transform = 'translateY(-220px) rotate(25deg)';
+            document.getElementById('lid').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('box-scene').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('box-scene').style.display = 'none';
+                    document.getElementById('cake-stage').style.display = 'flex';
+                }, 500);
+            }, 600);
+        }
+
+        function cutCake() {
+            triggerRainbowExplosion();
+            document.getElementById('cake-stage').style.transform = 'scale(1.1)';
+            document.getElementById('cake-stage').style.opacity = '0';
+            document.getElementById('cake-stage').style.transition = '0.5s';
+
+            setTimeout(() => {
+                document.getElementById('cake-stage').style.display = 'none';
+                document.getElementById('final-reveal').style.display = 'block';
+            }, 500);
+        }
+
+        function triggerRainbowExplosion() {
+            var duration = 8 * 1000;
+            var animationEnd = Date.now() + duration;
+            var colors = ['#ff4757', '#ffd700', '#70a1ff', '#2ed573', '#ffa502', '#ffffff'];
+
+            (function frame() {
+                confetti({
+                    particleCount: 10,
+                    angle: 60,
+                    spread: 70,
+                    origin: { x: 0 },
+                    colors: colors
+                });
+                confetti({
+                    particleCount: 10,
+                    angle: 120,
+                    spread: 70,
+                    origin: { x: 1 },
+                    colors: colors
+                });
+
+                if (Date.now() < animationEnd) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+
+            confetti({
+                particleCount: 300,
+                spread: 150,
+                origin: { y: 0.6 },
+                colors: colors,
+                ticks: 300
+            });
+        }
+    </script>
+</body>
+</html>
