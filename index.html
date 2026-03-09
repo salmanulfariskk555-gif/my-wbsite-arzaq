@@ -3,160 +3,300 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Voizon Digital Solution | 25th Anniversary</title>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Poppins:wght@300;400;600&display=swap');
-
-        body {
-            margin: 0; height: 100vh; display: flex; justify-content: center; align-items: center;
-            background: radial-gradient(circle, #1a1a2e, #16213e, #0f0f1b);
-            color: white; font-family: 'Poppins', sans-serif; overflow: hidden;
-        }
-
-        /* --- STAGE 1: THE VIBRANT GIFT BOX --- */
-        .box-container { text-align: center; cursor: pointer; z-index: 100; transition: 0.5s; }
-        .box {
-            width: 180px; height: 180px; background: #ff4757; position: relative;
-            margin: 0 auto; border-radius: 8px; box-shadow: 0 20px 60px rgba(255, 71, 87, 0.4);
-        }
-        .box::after { content: ''; position: absolute; width: 35px; height: 100%; background: #ffd700; left: 72.5px; }
-        .box::before { content: ''; position: absolute; width: 100%; height: 35px; background: #ffd700; top: 72.5px; }
-        .lid {
-            width: 200px; height: 45px; background: #ff4757; border: 3px solid #ffd700;
-            position: absolute; top: -15px; left: -10px; transition: 0.8s; z-index: 2; border-radius: 5px;
-        }
-
-        /* --- STAGE 2: THE CELEBRATION CAKE --- */
-        #cake-stage { display: none; flex-direction: column; align-items: center; text-align: center; }
-        .cake {
-            width: 250px; height: 150px; background: #ffffff; border-radius: 20px 20px 0 0;
-            position: relative; cursor: pointer; margin-top: 40px; box-shadow: 0 0 40px rgba(255,255,255,0.2);
-        }
-        .icing {
-            width: 100%; height: 50px; background: #70a1ff; border-radius: 20px 20px 0 0;
-            background: linear-gradient(45deg, #70a1ff, #2f3542);
-        }
-        .candle-container { position: absolute; top: -70px; left: 50%; transform: translateX(-50%); }
-        .number-25 {
-            font-size: 65px; font-weight: 900; color: #fff;
-            text-shadow: 0 0 20px #ff4757, 0 0 40px #ff4757;
-            animation: bounce 1s infinite alternate;
-        }
-
-        /* --- STAGE 3: THE FINAL SURPRISE & MESSAGE --- */
-        #final-reveal { display: none; text-align: center; width: 90%; max-width: 600px; animation: popIn 1s forwards; }
-        .celebration-name {
-            font-family: 'Montserrat', sans-serif; font-size: 3.5rem; margin: 0;
-            background: linear-gradient(45deg, #ffd700 0%, #fff 99%, #ffd700 100%);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            text-transform: uppercase; letter-spacing: 2px;
-        }
-        .message-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            padding: 25px;
-            border-radius: 20px;
-            margin-top: 25px;
-            border: 1px solid rgba(255, 215, 0, 0.3);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-        .message-card p { font-size: 1.1rem; line-height: 1.6; color: #f1f1f1; margin: 0; }
-        .age-badge { background: #ffd700; color: #000; padding: 5px 20px; font-weight: bold; border-radius: 50px; display: inline-block; margin-bottom: 10px; }
-
-        @keyframes bounce { from { transform: translateX(-50%) translateY(0); } to { transform: translateX(-50%) translateY(-15px); } }
-        @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-    </style>
+    <title>GSO Events | Luxury Event Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
-<body>
+<body class="bg-gray-50 font-sans">
 
-    <div class="box-container" id="box-scene" onclick="openBox()">
-        <div class="box"><div class="lid" id="lid"></div></div>
-        <h2 style="color: #ffd700; margin-top: 40px; text-shadow: 0 0 10px rgba(255,215,0,0.5);">A SURPRISE FROM VOIZON DIGITAL SOLUTION 🎁</h2>
-        <p style="color: white; opacity: 0.6;">Tap to celebrate our milestone!</p>
-    </div>
+   <nav class="bg-white py-4 shadow-md sticky top-0 z-50">
+    <div class="container mx-auto px-6 flex justify-between items-center">
+        <h1 class="text-2xl font-bold text-indigo-900 uppercase tracking-tight">
+            GSO<span class="text-amber-500">EVENTS</span>
+        </h1>
 
-    <div id="cake-stage" onclick="cutCake()">
-        <div class="candle-container"><div class="number-25">25</div></div>
-        <div class="cake"><div class="icing"></div></div>
-        <h2 style="color: white; margin-top: 40px;">Celebrating 25 Years of Innovation! ✨</h2>
-        <p style="color: #70a1ff; font-weight: 600;">TAP TO CUT THE ANNIVERSARY CAKE</p>
-    </div>
-
-    <div id="final-reveal">
-        <div class="age-badge">25 GLORIOUS YEARS</div>
-        <div style="color: white; letter-spacing: 10px; font-size: 1.2rem; font-weight: bold;">HAPPY ANNIVERSARY</div>
-        <h1 class="celebration-name">VOIZON DIGITAL SOLUTION</h1>
-
-        <div class="message-card">
-            <p>
-                "Celebrating 25 years of excellence, creativity, and digital transformation.
-                Thank you for being part of our incredible journey.
-                Here's to many more years of innovation and success together!" 🚀✨
-            </p>
+        <div class="hidden md:flex space-x-8 font-semibold items-center">
+            <a href="#" class="text-gray-700 hover:text-amber-500 transition">Home</a>
+            <a href="#services" class="text-gray-700 hover:text-amber-500 transition">Services</a>
+            <a href="#portfolio" class="text-gray-700 hover:text-amber-500 transition">Gallery</a>
+            <a href="#contact" class="bg-indigo-900 text-white px-6 py-2 rounded-full hover:bg-amber-500 transition shadow-lg">Book Now</a>
         </div>
-        <p style="color: #ffd700; margin-top: 20px; font-weight: bold; letter-spacing: 2px;">ESTD. 2001</p>
+
+        <button id="mobile-menu-button" class="md:hidden text-indigo-900 focus:outline-none">
+            <i class="fas fa-bars text-2xl" id="hamburger-icon"></i>
+        </button>
     </div>
 
-    <script>
-        function openBox() {
-            document.getElementById('lid').style.transform = 'translateY(-220px) rotate(25deg)';
-            document.getElementById('lid').style.opacity = '0';
-            setTimeout(() => {
-                document.getElementById('box-scene').style.opacity = '0';
-                setTimeout(() => {
-                    document.getElementById('box-scene').style.display = 'none';
-                    document.getElementById('cake-stage').style.display = 'flex';
-                }, 500);
-            }, 600);
-        }
+    <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100 absolute w-full left-0 shadow-xl transition-all duration-300">
+        <div class="flex flex-col p-6 space-y-4 font-bold text-gray-800">
+            <a href="#" class="mobile-link hover:text-amber-500 border-b pb-2">Home</a>
+            <a href="#services" class="mobile-link hover:text-amber-500 border-b pb-2">Services</a>
+            <a href="#portfolio" class="mobile-link hover:text-amber-500 border-b pb-2">Gallery</a>
+            <a href="#contact" class="mobile-link bg-indigo-900 text-white px-4 py-3 rounded-lg text-center">Book Now</a>
+        </div>
+    </div>
+</nav>
 
-        function cutCake() {
-            triggerRainbowExplosion();
-            document.getElementById('cake-stage').style.transform = 'scale(1.1)';
-            document.getElementById('cake-stage').style.opacity = '0';
-            document.getElementById('cake-stage').style.transition = '0.5s';
+<script>
+    const btn = document.getElementById('mobile-menu-button');
+    const menu = document.getElementById('mobile-menu');
+    const icon = document.getElementById('hamburger-icon');
+    const links = document.querySelectorAll('.mobile-link');
 
-            setTimeout(() => {
-                document.getElementById('cake-stage').style.display = 'none';
-                document.getElementById('final-reveal').style.display = 'block';
-            }, 500);
-        }
+    btn.addEventListener('click', () => {
+        menu.classList.toggle('hidden');
+        // Icon Change (Bars to X)
+        icon.classList.toggle('fa-bars');
+        icon.classList.toggle('fa-times');
+    });
 
-        function triggerRainbowExplosion() {
-            var duration = 8 * 1000;
-            var animationEnd = Date.now() + duration;
-            var colors = ['#ff4757', '#ffd700', '#70a1ff', '#2ed573', '#ffa502', '#ffffff'];
+    // Link click cheythaal menu auto close aakan
+    links.forEach(link => {
+        link.addEventListener('click', () => {
+            menu.classList.add('hidden');
+            icon.classList.add('fa-bars');
+            icon.classList.remove('fa-times');
+        });
+    });
+</script>
 
-            (function frame() {
-                confetti({
-                    particleCount: 10,
-                    angle: 60,
-                    spread: 70,
-                    origin: { x: 0 },
-                    colors: colors
-                });
-                confetti({
-                    particleCount: 10,
-                    angle: 120,
-                    spread: 70,
-                    origin: { x: 1 },
-                    colors: colors
-                });
+    <header class="relative h-[80vh] flex items-center justify-center text-center text-white">
+        <div class="absolute inset-0 bg-black/50 z-10"></div>
+        <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1511795409834-ef04bbd61622?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80')] bg-cover bg-center"></div>
 
-                if (Date.now() < animationEnd) {
-                    requestAnimationFrame(frame);
-                }
-            }());
+        <div class="relative z-20 px-4">
+            <h2 class="text-4xl md:text-6xl font-bold mb-4">Making Your Moments Unforgettable</h2>
+            <p class="text-lg md:text-xl mb-8 max-w-2xl mx-auto">Premium wedding planning, corporate events, and private parties with a touch of elegance.</p>
+            <a href="#services" class="bg-amber-500 text-white px-8 py-3 rounded-md text-lg font-semibold hover:bg-amber-600 transition">Explore Services</a>
+        </div>
+    </header>
 
-            confetti({
-                particleCount: 400,
-                spread: 150,
-                origin: { y: 0.6 },
-                colors: colors,
-                ticks: 300
-            });
-        }
-    </script>
+   <section id="services" class="py-24 bg-gray-50 overflow-hidden">
+    <div class="container mx-auto px-6">
+        <div class="text-center mb-20" data-aos="fade-up">
+            <span class="text-amber-500 uppercase tracking-[0.4em] text-sm font-bold block mb-3">What We Offer</span>
+            <h3 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Exquisite Services</h3>
+            <div class="w-24 h-1.5 bg-amber-500 mx-auto rounded-full"></div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+            <div class="group relative bg-white p-10 rounded-2xl shadow-sm hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100" data-aos="fade-up">
+                <div class="absolute -right-4 -bottom-4 text-gray-50 text-8xl group-hover:text-amber-50 transition-colors duration-500">
+                    <i class="fas fa-heart"></i>
+                </div>
+
+                <div class="relative z-10">
+                    <div class="w-16 h-16 bg-amber-500/10 rounded-xl flex items-center justify-center mb-8 group-hover:bg-amber-500 transition-colors duration-500">
+                        <i class="fas fa-heart text-3xl text-amber-500 group-hover:text-white transition-colors duration-500"></i>
+                    </div>
+                    <h4 class="text-2xl font-bold text-gray-900 mb-4">Royal Weddings</h4>
+                    <p class="text-gray-600 leading-relaxed mb-6">From bespoke venue selection to the grand final dance, we curate every detail of your luxury wedding experience.</p>
+                    <a href="#contact" class="text-amber-600 font-bold uppercase text-xs tracking-widest flex items-center group-hover:gap-3 transition-all">
+                        Inquire Now <i class="fas fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="group relative bg-indigo-900 p-10 rounded-2xl shadow-xl hover:-translate-y-3 transition-all duration-500 overflow-hidden" data-aos="fade-up" data-aos-delay="100">
+                <div class="absolute -right-4 -bottom-4 text-white/5 text-8xl">
+                    <i class="fas fa-briefcase"></i>
+                </div>
+
+                <div class="relative z-10">
+                    <div class="w-16 h-16 bg-white/10 rounded-xl flex items-center justify-center mb-8 group-hover:bg-amber-500 transition-colors duration-500">
+                        <i class="fas fa-briefcase text-3xl text-white"></i>
+                    </div>
+                    <h4 class="text-2xl font-bold text-white mb-4">Corporate Galas</h4>
+                    <p class="text-indigo-100 leading-relaxed mb-6">High-stakes conferences, award ceremonies, and product launches executed with absolute precision and professionalism.</p>
+                    <a href="#contact" class="text-amber-400 font-bold uppercase text-xs tracking-widest flex items-center group-hover:gap-3 transition-all">
+                        Inquire Now <i class="fas fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="group relative bg-white p-10 rounded-2xl shadow-sm hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100" data-aos="fade-up" data-aos-delay="200">
+                <div class="absolute -right-4 -bottom-4 text-gray-50 text-8xl group-hover:text-amber-50 transition-colors duration-500">
+                    <i class="fas fa-birthday-cake"></i>
+                </div>
+
+                <div class="relative z-10">
+                    <div class="w-16 h-16 bg-amber-500/10 rounded-xl flex items-center justify-center mb-8 group-hover:bg-amber-500 transition-colors duration-500">
+                        <i class="fas fa-birthday-cake text-3xl text-amber-500 group-hover:text-white transition-colors duration-500"></i>
+                    </div>
+                    <h4 class="text-2xl font-bold text-gray-900 mb-4">Private Soirées</h4>
+                    <p class="text-gray-600 leading-relaxed mb-6">Whether it's an intimate anniversary or a grand themed birthday, we bring the magic to your private celebrations.</p>
+                    <a href="#contact" class="text-amber-600 font-bold uppercase text-xs tracking-widest flex items-center group-hover:gap-3 transition-all">
+                        Inquire Now <i class="fas fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+    <section id="portfolio" class="py-20 bg-white">
+    <div class="container mx-auto px-6">
+        <div class="text-center mb-16" data-aos="fade-up">
+            <h3 class="text-4xl font-bold text-gray-900">Our Masterpieces</h3>
+            <p class="text-gray-500 mt-4 uppercase tracking-widest text-sm font-medium">Glance at our recent premium events</p>
+            <div class="w-24 h-1 bg-amber-500 mx-auto mt-4"></div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="relative group overflow-hidden rounded-xl shadow-2xl" data-aos="zoom-in">
+                <img src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=800&q=80" alt="Wedding" class="w-full h-80 object-cover transform group-hover:scale-110 transition duration-700">
+                <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition duration-500 flex items-center justify-center">
+                    <div class="text-center text-white p-4">
+                        <h4 class="text-2xl font-bold">Royal Wedding</h4>
+                        <p class="text-amber-400">Grand Ballroom, Kochi</p>
+                    </div>
+                </div>
+            </div>
+            <div class="relative group overflow-hidden rounded-xl shadow-2xl" data-aos="zoom-in" data-aos-delay="100">
+                <img src="https://images.unsplash.com/photo-1505236858219-8359eb29e329?auto=format&fit=crop&w=800&q=80" alt="Corporate" class="w-full h-80 object-cover transform group-hover:scale-110 transition duration-700">
+                <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition duration-500 flex items-center justify-center">
+                    <div class="text-center text-white p-4">
+                        <h4 class="text-2xl font-bold">Tech Summit 2026</h4>
+                        <p class="text-amber-400">Cyber Park Auditorium</p>
+                    </div>
+                </div>
+            </div>
+            <div class="relative group overflow-hidden rounded-xl shadow-2xl" data-aos="zoom-in" data-aos-delay="200">
+                <img src="https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=800&q=80" alt="Party" class="w-full h-80 object-cover transform group-hover:scale-110 transition duration-700">
+                <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition duration-500 flex items-center justify-center">
+                    <div class="text-center text-white p-4">
+                        <h4 class="text-2xl font-bold">Luxe Anniversary</h4>
+                        <p class="text-amber-400">Private Beach Resort</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+    <section id="booking" class="py-24 bg-gray-50">
+    <div class="container mx-auto px-6 max-w-4xl bg-white p-10 rounded-2xl shadow-sm border border-gray-100">
+        <div class="text-center mb-10">
+            <h3 class="text-3xl font-bold">Plan Your Celebration</h3>
+            <p class="text-gray-500 mt-2">Fill the details and our expert will contact you within 24 hours.</p>
+        </div>
+
+        <form class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2 italic">Full Name</label>
+                <input type="text" placeholder="John Doe" class="w-full px-4 py-3 rounded-lg border focus:ring-2 focus:ring-amber-500 outline-none transition">
+            </div>
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2 italic">Event Type</label>
+                <select class="w-full px-4 py-3 rounded-lg border focus:ring-2 focus:ring-amber-500 outline-none transition">
+                    <option>Wedding Planning</option>
+                    <option>Corporate Gala</option>
+                    <option>Private Party</option>
+                    <option>Product Launch</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2 italic">Estimated Guests</label>
+                <input type="number" placeholder="e.g., 500" class="w-full px-4 py-3 rounded-lg border focus:ring-2 focus:ring-amber-500 outline-none transition">
+            </div>
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2 italic">Event Date</label>
+                <input type="date" class="w-full px-4 py-3 rounded-lg border focus:ring-2 focus:ring-amber-500 outline-none transition">
+            </div>
+            <div class="md:col-span-2">
+                <label class="block text-sm font-semibold text-gray-700 mb-2 italic">Special Requests</label>
+                <textarea rows="4" placeholder="Tell us more about your dream event..." class="w-full px-4 py-3 rounded-lg border focus:ring-2 focus:ring-amber-500 outline-none transition"></textarea>
+            </div>
+            <div class="md:col-span-2">
+                <button type="submit" class="w-full bg-indigo-900 text-white py-4 rounded-lg font-bold uppercase tracking-widest hover:bg-amber-500 transition-all duration-300">Submit Inquiry</button>
+            </div>
+        </form>
+    </div>
+</section>
+
+
+
+<div class="fixed bottom-6 right-6 z-50">
+    <a href="https://wa.me/YOUR_NUMBER" class="bg-green-500 h-14 w-14 flex items-center justify-center rounded-full shadow-2xl hover:scale-110 transition-transform duration-300">
+        <i class="fab fa-whatsapp text-white text-3xl"></i>
+    </a>
+</div>
+
+ <section id="contact" class="relative py-24 overflow-hidden">
+    <div class="absolute inset-0 bg-indigo-950"></div>
+    <div class="absolute top-0 left-0 w-64 h-64 bg-amber-500/10 rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl"></div>
+    <div class="absolute bottom-0 right-0 w-96 h-96 bg-indigo-500/10 rounded-full translate-x-1/3 translate-y-1/3 blur-3xl"></div>
+
+    <div class="container mx-auto px-6 relative z-10">
+        <div class="max-w-4xl mx-auto bg-white/5 backdrop-blur-lg border border-white/10 p-12 rounded-3xl text-center shadow-2xl" data-aos="zoom-in">
+
+            <span class="text-amber-500 uppercase tracking-[0.3em] text-sm font-bold mb-4 block">Reservation</span>
+            <h3 class="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">Ready to Elevate Your Next Celebration?</h3>
+            <p class="text-gray-400 text-lg mb-10 max-w-2xl mx-auto leading-relaxed">
+                Experience the perfect blend of luxury and seamless planning. Our experts are ready to bring your vision to life with world-class standards.
+            </p>
+
+            <div class="flex flex-col md:flex-row items-center justify-center gap-6">
+                <a href="#booking" class="group relative inline-flex items-center justify-center px-10 py-4 font-bold text-white transition-all duration-300 bg-amber-500 hover:bg-amber-600 rounded-full shadow-[0_10px_20px_rgba(245,158,11,0.3)]">
+                    <span class="relative uppercase tracking-widest text-sm">Book Your Date</span>
+                    <i class="fas fa-calendar-alt ml-3 transition-transform group-hover:translate-x-1"></i>
+                </a>
+
+                <a href="https://wa.me/91XXXXXXXXXX?text=Hi, I want to discuss a premium event"
+                   class="inline-flex items-center px-10 py-4 font-bold text-white border border-white/20 rounded-full hover:bg-white/10 transition-all duration-300 backdrop-blur-sm">
+                    <i class="fab fa-whatsapp mr-3 text-green-400"></i>
+                    <span class="uppercase tracking-widest text-sm">Consult an Expert</span>
+                </a>
+            </div>
+
+            <div class="mt-12 pt-10 border-t border-white/10 grid grid-cols-2 md:grid-cols-3 gap-6 opacity-60">
+                <div class="flex items-center justify-center space-x-2">
+                    <i class="fas fa-shield-alt text-amber-500"></i>
+                    <span class="text-xs text-white uppercase tracking-tighter">Verified Services</span>
+                </div>
+                <div class="flex items-center justify-center space-x-2">
+                    <i class="fas fa-star text-amber-500"></i>
+                    <span class="text-xs text-white uppercase tracking-tighter">5-Star Planning</span>
+                </div>
+                <div class="hidden md:flex items-center justify-center space-x-2">
+                    <i class="fas fa-clock text-amber-500"></i>
+                    <span class="text-xs text-white uppercase tracking-tighter">24/7 Support</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+    <footer id="contact" class="bg-gray-900 text-gray-300 py-20">
+    <div class="container mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-12">
+        <div>
+            <h1 class="text-2xl font-bold text-white mb-6">ELITE<span class="text-amber-500">EVENTS</span></h1>
+            <p class="mb-6 leading-relaxed">Defining the standards of luxury event management across the globe. From conceptualization to execution, we bring your dreams to life.</p>
+            <div class="flex space-x-4">
+                <a href="#" class="hover:text-amber-500 text-xl transition"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="hover:text-amber-500 text-xl transition"><i class="fab fa-facebook"></i></a>
+                <a href="#" class="hover:text-amber-500 text-xl transition"><i class="fab fa-linkedin"></i></a>
+            </div>
+        </div>
+
+        <div>
+            <h4 class="text-xl font-bold text-white mb-6">Get In Touch</h4>
+            <ul class="space-y-4">
+                <li class="flex items-start"><i class="fas fa-map-marker-alt mt-1 mr-4 text-amber-500"></i> Luxury Suite 402, Business Bay, Kochi</li>
+                <li class="flex items-center"><i class="fas fa-phone mr-4 text-amber-500"></i> +91 9745189745</li>
+                <li class="flex items-center"><i class="fas fa-envelope mr-4 text-amber-500"></i> hello@eliteevents.com</li>
+            </ul>
+        </div>
+
+        <div>
+            <h4 class="text-xl font-bold text-white mb-6">Locate Us</h4>
+            <div class="w-full h-48 bg-gray-800 rounded-lg overflow-hidden grayscale hover:grayscale-0 transition duration-500">
+                <iframe src="https://www.google.com/maps/embed?pb=YOUR_GOOGLE_MAPS_EMBED_LINK" class="w-full h-full border-0" allowfullscreen="" loading="lazy"></iframe>
+            </div>
+        </div>
+    </div>
+    <div class="text-center mt-16 border-t border-gray-800 pt-8 text-sm">
+        &copy; 2026 Elite Events Management. All Rights Reserved.
+    </div>
+</footer>
+
 </body>
 </html>
