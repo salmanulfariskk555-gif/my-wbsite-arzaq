@@ -3,300 +3,514 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GSO Events | Luxury Event Management</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-</head>
-<body class="bg-gray-50 font-sans">
+    <title>Voizon Digital Solutions - Professional Invoice</title>
+   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Birthstone&display=swap');
 
-   <nav class="bg-white py-4 shadow-md sticky top-0 z-50">
-    <div class="container mx-auto px-6 flex justify-between items-center">
-        <h1 class="text-2xl font-bold text-indigo-900 uppercase tracking-tight">
-            GSO<span class="text-amber-500">EVENTS</span>
-        </h1>
+    :root { --primary: #0f172a; --accent: #2563eb; --gray: #64748b; --success: #10b981; }
 
-        <div class="hidden md:flex space-x-8 font-semibold items-center">
-            <a href="#" class="text-gray-700 hover:text-amber-500 transition">Home</a>
-            <a href="#services" class="text-gray-700 hover:text-amber-500 transition">Services</a>
-            <a href="#portfolio" class="text-gray-700 hover:text-amber-500 transition">Gallery</a>
-            <a href="#contact" class="bg-indigo-900 text-white px-6 py-2 rounded-full hover:bg-amber-500 transition shadow-lg">Book Now</a>
+    body { font-family: 'Segoe UI', sans-serif; background: #f1f5f9; padding: 20px; color: #1e293b; }
+
+    .invoice-wrapper {
+        max-width: 900px;
+        margin: auto;
+        background: white;
+        padding: 40px;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        position: relative;
+        overflow: hidden; /* Stamp purath pogaathirikkaan */
+    }
+
+    /* Watermark */
+    .invoice-wrapper::after {
+        content: "VOIZON DIGITAL";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) rotate(-45deg);
+        font-size: 80px;
+        color: rgba(0,0,0,0.02);
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    /* Professional PAID Stamp */
+    #paidStamp {
+        display: none; /* JS vazhi mathram block aakkum */
+        position: absolute;
+        top: 150px;
+        right: 80px;
+        border: 5px solid var(--success);
+        color: var(--success);
+        padding: 10px 25px;
+        font-size: 35px;
+        font-weight: 900;
+        text-transform: uppercase;
+        transform: rotate(-20deg);
+        border-radius: 10px;
+        opacity: 0.4;
+        z-index: 10;
+        user-select: none;
+    }
+
+    .header { display: flex; justify-content: space-between; border-bottom: 2px solid #e2e8f0; padding-bottom: 20px; margin-bottom: 20px; position: relative; z-index: 1; }
+    .brand h1 { margin: 0; font-size: 28px; color: var(--primary); text-transform: uppercase; }
+    .brand span { color: var(--accent); }
+
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 30px; position: relative; z-index: 1; }
+    input, select { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-family: inherit; font-size: 14px; }
+
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; position: relative; z-index: 1; }
+    th { background: var(--primary); color: white; padding: 12px; text-align: left; }
+    td { padding: 15px 12px; border-bottom: 1px solid #f1f5f9; }
+
+    .calc-area { margin-top: 20px; display: flex; justify-content: space-between; align-items: flex-start; position: relative; z-index: 1; }
+    .payment-info { background: #f8fafc; padding: 15px; border-radius: 8px; font-size: 13px; width: 45%; border-left: 4px solid var(--accent); }
+
+    .totals { width: 40%; text-align: right; }
+    .grand-total { font-size: 22px; font-weight: 800; color: var(--accent); border-top: 2px solid #e2e8f0; padding-top: 10px; }
+
+    .controls { background: #e2e8f0; padding: 20px; border-radius: 10px; margin-bottom: 20px; display: grid; grid-template-columns: 1fr 1.5fr 1fr 1fr auto; gap: 10px; }
+
+    .btn { border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+    .btn-add { background: var(--accent); color: white; }
+    .btn-add:hover { background: #1d4ed8; transform: translateY(-1px); }
+    .btn-print { background: var(--primary); color: white; width: 100%; margin-top: 20px; font-size: 16px; }
+
+    #sig-space {
+        font-family: 'Birthstone', cursive;
+        font-size: 35px;
+        color: var(--accent);
+        margin-bottom: -5px;
+    }
+
+    .print-only { display: none; }
+
+    /* Print Specific Styling */
+    @media print {
+        body { background: white; padding: 0; }
+        .invoice-wrapper { box-shadow: none; padding: 0; max-width: 100%; }
+        .controls, .btn-print, .delete-btn, .history-section, .btn, #savedClients { display: none !important; }
+        .print-only { display: block !important; }
+
+        input, select {
+            border: none !important;
+            background: transparent !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            appearance: none;
+            -webkit-appearance: none;
+            color: #1e293b !important;
+        }
+
+        #invoiceStatus { font-weight: bold; color: var(--accent) !important; }
+        #dueDate { color: #ef4444 !important; font-weight: bold; }
+        .invoice-wrapper::after { color: rgba(0,0,0,0.03); }
+
+        /* Paid Stamp print-ilum kaanan */
+        #paidStamp { opacity: 0.6; -webkit-print-color-adjust: exact; }
+    }
+</style>
+    <body>
+
+<div class="invoice-wrapper">
+    <div id="paidStamp">PAID</div>
+
+    <div class="header">
+        <div class="brand">
+            <img src="https://i.ibb.co/93t7RTZf/Whats-App-Image-2026-03-14-at-9-39-08-PM-1.jpg"
+                 alt="Voizon Logo"
+                 style="height: 70px; border-radius: 8px; margin-bottom: 10px; display: block; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+
+            <h1>Voizon <span>Digital</span></h1>
+            <p style="margin: 5px 0 0 0; font-size: 13px; color: #64748b; font-weight: 500;">
+                IT Services | Graphic Design | Digital Marketing
+            </p>
         </div>
-
-        <button id="mobile-menu-button" class="md:hidden text-indigo-900 focus:outline-none">
-            <i class="fas fa-bars text-2xl" id="hamburger-icon"></i>
-        </button>
-    </div>
-
-    <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100 absolute w-full left-0 shadow-xl transition-all duration-300">
-        <div class="flex flex-col p-6 space-y-4 font-bold text-gray-800">
-            <a href="#" class="mobile-link hover:text-amber-500 border-b pb-2">Home</a>
-            <a href="#services" class="mobile-link hover:text-amber-500 border-b pb-2">Services</a>
-            <a href="#portfolio" class="mobile-link hover:text-amber-500 border-b pb-2">Gallery</a>
-            <a href="#contact" class="mobile-link bg-indigo-900 text-white px-4 py-3 rounded-lg text-center">Book Now</a>
-        </div>
-    </div>
-</nav>
-
-<script>
-    const btn = document.getElementById('mobile-menu-button');
-    const menu = document.getElementById('mobile-menu');
-    const icon = document.getElementById('hamburger-icon');
-    const links = document.querySelectorAll('.mobile-link');
-
-    btn.addEventListener('click', () => {
-        menu.classList.toggle('hidden');
-        // Icon Change (Bars to X)
-        icon.classList.toggle('fa-bars');
-        icon.classList.toggle('fa-times');
-    });
-
-    // Link click cheythaal menu auto close aakan
-    links.forEach(link => {
-        link.addEventListener('click', () => {
-            menu.classList.add('hidden');
-            icon.classList.add('fa-bars');
-            icon.classList.remove('fa-times');
-        });
-    });
-</script>
-
-    <header class="relative h-[80vh] flex items-center justify-center text-center text-white">
-        <div class="absolute inset-0 bg-black/50 z-10"></div>
-        <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1511795409834-ef04bbd61622?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80')] bg-cover bg-center"></div>
-
-        <div class="relative z-20 px-4">
-            <h2 class="text-4xl md:text-6xl font-bold mb-4">Making Your Moments Unforgettable</h2>
-            <p class="text-lg md:text-xl mb-8 max-w-2xl mx-auto">Premium wedding planning, corporate events, and private parties with a touch of elegance.</p>
-            <a href="#services" class="bg-amber-500 text-white px-8 py-3 rounded-md text-lg font-semibold hover:bg-amber-600 transition">Explore Services</a>
-        </div>
-    </header>
-
-   <section id="services" class="py-24 bg-gray-50 overflow-hidden">
-    <div class="container mx-auto px-6">
-        <div class="text-center mb-20" data-aos="fade-up">
-            <span class="text-amber-500 uppercase tracking-[0.4em] text-sm font-bold block mb-3">What We Offer</span>
-            <h3 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Exquisite Services</h3>
-            <div class="w-24 h-1.5 bg-amber-500 mx-auto rounded-full"></div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
-            <div class="group relative bg-white p-10 rounded-2xl shadow-sm hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100" data-aos="fade-up">
-                <div class="absolute -right-4 -bottom-4 text-gray-50 text-8xl group-hover:text-amber-50 transition-colors duration-500">
-                    <i class="fas fa-heart"></i>
-                </div>
-
-                <div class="relative z-10">
-                    <div class="w-16 h-16 bg-amber-500/10 rounded-xl flex items-center justify-center mb-8 group-hover:bg-amber-500 transition-colors duration-500">
-                        <i class="fas fa-heart text-3xl text-amber-500 group-hover:text-white transition-colors duration-500"></i>
-                    </div>
-                    <h4 class="text-2xl font-bold text-gray-900 mb-4">Royal Weddings</h4>
-                    <p class="text-gray-600 leading-relaxed mb-6">From bespoke venue selection to the grand final dance, we curate every detail of your luxury wedding experience.</p>
-                    <a href="#contact" class="text-amber-600 font-bold uppercase text-xs tracking-widest flex items-center group-hover:gap-3 transition-all">
-                        Inquire Now <i class="fas fa-arrow-right ml-2"></i>
-                    </a>
-                </div>
-            </div>
-
-            <div class="group relative bg-indigo-900 p-10 rounded-2xl shadow-xl hover:-translate-y-3 transition-all duration-500 overflow-hidden" data-aos="fade-up" data-aos-delay="100">
-                <div class="absolute -right-4 -bottom-4 text-white/5 text-8xl">
-                    <i class="fas fa-briefcase"></i>
-                </div>
-
-                <div class="relative z-10">
-                    <div class="w-16 h-16 bg-white/10 rounded-xl flex items-center justify-center mb-8 group-hover:bg-amber-500 transition-colors duration-500">
-                        <i class="fas fa-briefcase text-3xl text-white"></i>
-                    </div>
-                    <h4 class="text-2xl font-bold text-white mb-4">Corporate Galas</h4>
-                    <p class="text-indigo-100 leading-relaxed mb-6">High-stakes conferences, award ceremonies, and product launches executed with absolute precision and professionalism.</p>
-                    <a href="#contact" class="text-amber-400 font-bold uppercase text-xs tracking-widest flex items-center group-hover:gap-3 transition-all">
-                        Inquire Now <i class="fas fa-arrow-right ml-2"></i>
-                    </a>
-                </div>
-            </div>
-
-            <div class="group relative bg-white p-10 rounded-2xl shadow-sm hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100" data-aos="fade-up" data-aos-delay="200">
-                <div class="absolute -right-4 -bottom-4 text-gray-50 text-8xl group-hover:text-amber-50 transition-colors duration-500">
-                    <i class="fas fa-birthday-cake"></i>
-                </div>
-
-                <div class="relative z-10">
-                    <div class="w-16 h-16 bg-amber-500/10 rounded-xl flex items-center justify-center mb-8 group-hover:bg-amber-500 transition-colors duration-500">
-                        <i class="fas fa-birthday-cake text-3xl text-amber-500 group-hover:text-white transition-colors duration-500"></i>
-                    </div>
-                    <h4 class="text-2xl font-bold text-gray-900 mb-4">Private Soirées</h4>
-                    <p class="text-gray-600 leading-relaxed mb-6">Whether it's an intimate anniversary or a grand themed birthday, we bring the magic to your private celebrations.</p>
-                    <a href="#contact" class="text-amber-600 font-bold uppercase text-xs tracking-widest flex items-center group-hover:gap-3 transition-all">
-                        Inquire Now <i class="fas fa-arrow-right ml-2"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-    <section id="portfolio" class="py-20 bg-white">
-    <div class="container mx-auto px-6">
-        <div class="text-center mb-16" data-aos="fade-up">
-            <h3 class="text-4xl font-bold text-gray-900">Our Masterpieces</h3>
-            <p class="text-gray-500 mt-4 uppercase tracking-widest text-sm font-medium">Glance at our recent premium events</p>
-            <div class="w-24 h-1 bg-amber-500 mx-auto mt-4"></div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="relative group overflow-hidden rounded-xl shadow-2xl" data-aos="zoom-in">
-                <img src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=800&q=80" alt="Wedding" class="w-full h-80 object-cover transform group-hover:scale-110 transition duration-700">
-                <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition duration-500 flex items-center justify-center">
-                    <div class="text-center text-white p-4">
-                        <h4 class="text-2xl font-bold">Royal Wedding</h4>
-                        <p class="text-amber-400">Grand Ballroom, Kochi</p>
-                    </div>
-                </div>
-            </div>
-            <div class="relative group overflow-hidden rounded-xl shadow-2xl" data-aos="zoom-in" data-aos-delay="100">
-                <img src="https://images.unsplash.com/photo-1505236858219-8359eb29e329?auto=format&fit=crop&w=800&q=80" alt="Corporate" class="w-full h-80 object-cover transform group-hover:scale-110 transition duration-700">
-                <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition duration-500 flex items-center justify-center">
-                    <div class="text-center text-white p-4">
-                        <h4 class="text-2xl font-bold">Tech Summit 2026</h4>
-                        <p class="text-amber-400">Cyber Park Auditorium</p>
-                    </div>
-                </div>
-            </div>
-            <div class="relative group overflow-hidden rounded-xl shadow-2xl" data-aos="zoom-in" data-aos-delay="200">
-                <img src="https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=800&q=80" alt="Party" class="w-full h-80 object-cover transform group-hover:scale-110 transition duration-700">
-                <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition duration-500 flex items-center justify-center">
-                    <div class="text-center text-white p-4">
-                        <h4 class="text-2xl font-bold">Luxe Anniversary</h4>
-                        <p class="text-amber-400">Private Beach Resort</p>
-                    </div>
-                </div>
-            </div>
+        <div style="text-align: right;">
+            <h2 id="displayDocType">INVOICE</h2>
+            <p>ID: <strong id="invId"></strong></p>
+            <p>Date: <span id="currentDate"></span></p>
+            <p style="color: #ef4444; font-weight: bold;">Due: <input type="text" value="On Receipt" style="width: 80px; border: none; font-weight: bold; padding: 0; color: #ef4444; background: transparent; text-align: right;"></p>
         </div>
     </div>
-</section>
-    <section id="booking" class="py-24 bg-gray-50">
-    <div class="container mx-auto px-6 max-w-4xl bg-white p-10 rounded-2xl shadow-sm border border-gray-100">
-        <div class="text-center mb-10">
-            <h3 class="text-3xl font-bold">Plan Your Celebration</h3>
-            <p class="text-gray-500 mt-2">Fill the details and our expert will contact you within 24 hours.</p>
+
+    <div class="info-grid">
+        <div class="info-box">
+            <h4>Bill To:</h4>
+            <select id="savedClients" onchange="loadClientData()" style="background: #f1f5f9; border: 1px dashed var(--accent);">
+                <option value="">Select Saved Client</option>
+            </select>
+            <div id="printName" class="print-only"></div>
+            <input type="text" id="clientName" placeholder="Client Name" oninput="document.getElementById('printName').innerText = this.value">
+            <div id="printAddr" class="print-only"></div>
+            <input type="text" id="clientAddress" placeholder="Client Address" oninput="document.getElementById('printAddr').innerText = this.value">
+            <button type="button" class="btn" onclick="saveClient()" style="padding: 5px 10px; font-size: 11px; background: #10b981; color: white; margin-bottom: 15px;">+ Save to Contacts</button>
+        </div>
+        <div class="info-box" style="text-align: right;">
+            <h4>Invoice Details:</h4>
+            <input type="text" id="dueDate" placeholder="Due Date (e.g. 25/03/2026)" style="text-align: right;">
+            <select id="invoiceStatus" onchange="updateCalculations()" style="text-align-last: right;">
+                <option value="UNPAID">Status: Pending</option>
+                <option value="PAID">Status: Paid</option>
+                <option value="PARTIAL">Status: Advance Received</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="controls">
+        <select id="clientType" onchange="updateCalculations()">
+            <option value="kerala">Kerala Client (GST 18%)</option>
+            <option value="foreign">Foreign Client (Export - 0% Tax)</option>
+        </select>
+        <select id="docType" onchange="updateCalculations()">
+            <option value="INVOICE">Document: INVOICE</option>
+            <option value="QUOTATION">Document: QUOTATION</option>
+        </select>
+      <select id="serviceType">
+    <optgroup label="Digital Marketing">
+        <option value="Social Media Management (SMM)">Social Media Management (SMM)</option>
+        <option value="Social Media Advertising (Meta/Ads)">Social Media Advertising (Meta/Ads)</option>
+        <option value="Search Engine Optimization (SEO)">Search Engine Optimization (SEO)</option>
+        <option value="Google Ads / PPC Management">Google Ads / PPC Management</option>
+        <option value="Content Writing & Strategy">Content Writing & Strategy</option>
+        <option value="Email Marketing Campaign">Email Marketing Campaign</option>
+        <option value="Influencer Marketing Setup">Influencer Marketing Setup</option>
+        <option value="YouTube Channel Growth & Management">YouTube Channel Growth & Management</option>
+    </optgroup>
+
+    <optgroup label="Graphic Design & Branding">
+        <option value="Professional Logo & Brand Identity">Professional Logo & Brand Identity</option>
+        <option value="Social Media Poster Design">Social Media Poster Design</option>
+        <option value="UI/UX Design (Mobile & Web)">UI/UX Design (Mobile & Web)</option>
+        <option value="Brochure & Business Card Design">Brochure & Business Card Design</option>
+        <option value="Product Packaging Design">Product Packaging Design</option>
+        <option value="Video Editing & Motion Graphics">Video Editing & Motion Graphics</option>
+        <option value="3D Modeling & Visualization">3D Modeling & Visualization</option>
+    </optgroup>
+
+    <optgroup label="Web & IT Services">
+        <option value="Business Website Development">Business Website Development</option>
+        <option value="E-commerce Store (Shopify/Woo)">E-commerce Store (Shopify/Woo)</option>
+        <option value="Custom Software Development">Custom Software Development</option>
+        <option value="Mobile App Development (Android/iOS)">Mobile App Development (Android/iOS)</option>
+        <option value="Domain & Cloud Hosting Setup">Domain & Cloud Hosting Setup</option>
+        <option value="Website Maintenance & Support">Website Maintenance & Support</option>
+        <option value="Software License & Installation">Software License & Installation</option>
+        <option value="IT Technical Support & Security">IT Technical Support & Security</option>
+    </optgroup>
+
+    <optgroup label="Consultancy & Others">
+        <option value="Digital Business Consultation">Digital Business Consultation</option>
+        <option value="Business Documentation & Presentation">Business Documentation & Presentation</option>
+        <option value="Google My Business (GMB) Setup">Google My Business (GMB) Setup</option>
+    </optgroup>
+</select>
+        <input type="number" id="qty" value="1">
+        <input type="number" id="price" placeholder="Price">
+        <button class="btn btn-add" onclick="addItem()">Add Item</button>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+               <th>Description</th>
+<th>Unit/Qty</th>
+<th>Rate</th>
+<th>Total</th>
+                <th class="delete-btn"></th>
+            </tr>
+        </thead>
+        <tbody id="invoiceBody"></tbody>
+    </table>
+
+    <div class="calc-area">
+        <div class="payment-info">
+            <h4 style="margin:0 0 10px 0;">Payment Details:</h4>
+            <p><strong>Bank:</strong> Federal Bank</p>
+            <p><strong>A/C:</strong> 99980117742143</p>
+            <p><strong>IFSC:</strong> FDRL0001647</p>
+            <p><strong>UPI ID:</strong> 9567497943@ibl</p>
+
+            <div id="qr-container" style="margin-top:15px; display:flex; align-items:center; gap:10px;">
+                <img id="qr_code" src="" style="width:110px; height:110px; border:1px solid #ccc; background:#fff; padding:5px;" alt="Scan to Pay">
+                <div style="font-size:11px; color:var(--gray);">
+                    <b>SCAN TO PAY</b><br>GPay, PhonePe, Paytm<br>
+                    <span style="color:var(--accent)">Amount updates live</span>
+                </div>
+            </div>
+
+            <div style="margin-top: 30px; text-align: left; border-top: 1px solid #e2e8f0; padding-top: 10px;">
+                <div id="sig-space">Voizon Digital</div>
+                <p style="margin:0; font-weight: bold;">Authorized Signatory</p>
+            </div>
         </div>
 
-        <form class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2 italic">Full Name</label>
-                <input type="text" placeholder="John Doe" class="w-full px-4 py-3 rounded-lg border focus:ring-2 focus:ring-amber-500 outline-none transition">
-            </div>
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2 italic">Event Type</label>
-                <select class="w-full px-4 py-3 rounded-lg border focus:ring-2 focus:ring-amber-500 outline-none transition">
-                    <option>Wedding Planning</option>
-                    <option>Corporate Gala</option>
-                    <option>Private Party</option>
-                    <option>Product Launch</option>
-                </select>
-            </div>
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2 italic">Estimated Guests</label>
-                <input type="number" placeholder="e.g., 500" class="w-full px-4 py-3 rounded-lg border focus:ring-2 focus:ring-amber-500 outline-none transition">
-            </div>
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2 italic">Event Date</label>
-                <input type="date" class="w-full px-4 py-3 rounded-lg border focus:ring-2 focus:ring-amber-500 outline-none transition">
-            </div>
-            <div class="md:col-span-2">
-                <label class="block text-sm font-semibold text-gray-700 mb-2 italic">Special Requests</label>
-                <textarea rows="4" placeholder="Tell us more about your dream event..." class="w-full px-4 py-3 rounded-lg border focus:ring-2 focus:ring-amber-500 outline-none transition"></textarea>
-            </div>
-            <div class="md:col-span-2">
-                <button type="submit" class="w-full bg-indigo-900 text-white py-4 rounded-lg font-bold uppercase tracking-widest hover:bg-amber-500 transition-all duration-300">Submit Inquiry</button>
-            </div>
-        </form>
+        <div class="totals">
+            <p>Subtotal: <span id="subtotal">₹0.00</span></p>
+            <p>Discount (%): <input type="number" id="discountPerc" value="0" oninput="updateCalculations()" style="width: 60px; padding: 5px;"></p>
+            <p id="tax">GST (18%): ₹0.00</p>
+            <p class="grand-total">Total: <span id="grandTotal">₹0.00</span></p>
+            <div id="wordsContainer" style="font-size: 11px; color: var(--gray); font-style: italic; margin-top: 10px; text-align: right;"></div>
+        </div>
     </div>
-</section>
 
+    <div style="margin-top: 20px; font-size: 11px; color: #64748b; border-top: 1px solid #e2e8f0; padding-top: 10px;">
+        <strong>Terms & Conditions:</strong>
+        <p style="margin: 2px 0;">1. Support available for 30 days from project delivery.</p>
+        <p style="margin: 2px 0;">2. 50% advance payment is non-refundable.</p>
+        <p style="margin: 2px 0;">3. Payment should be made within the due date.</p>
+    </div>
 
-
-<div class="fixed bottom-6 right-6 z-50">
-    <a href="https://wa.me/YOUR_NUMBER" class="bg-green-500 h-14 w-14 flex items-center justify-center rounded-full shadow-2xl hover:scale-110 transition-transform duration-300">
-        <i class="fab fa-whatsapp text-white text-3xl"></i>
-    </a>
+    <button class="btn btn-print" onclick="printInvoice()">Print / Save as PDF</button>
+    <button class="btn" onclick="shareToWhatsApp()" style="background: #25d366; color: white; width: 100%; margin-top: 10px; font-size: 16px;">Share to WhatsApp</button>
 </div>
 
- <section id="contact" class="relative py-24 overflow-hidden">
-    <div class="absolute inset-0 bg-indigo-950"></div>
-    <div class="absolute top-0 left-0 w-64 h-64 bg-amber-500/10 rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl"></div>
-    <div class="absolute bottom-0 right-0 w-96 h-96 bg-indigo-500/10 rounded-full translate-x-1/3 translate-y-1/3 blur-3xl"></div>
+<div class="invoice-wrapper history-section" style="margin-top: 20px; font-size: 13px;">
+    <h3>Recent Invoices</h3>
+    <table style="width:100%; font-size: 12px; border-collapse: collapse;">
+        <thead>
+            <tr style="background:#f1f5f9;">
+                <th style="padding:10px;">Inv ID</th>
+                <th>Client</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody id="recentInvoicesBody"></tbody>
+    </table>
+    <button onclick="localStorage.removeItem('vds_history'); location.reload();" style="margin-top:10px; font-size:10px; color:red; border:none; background:none; cursor:pointer;">Clear History</button>
+</div>
 
-    <div class="container mx-auto px-6 relative z-10">
-        <div class="max-w-4xl mx-auto bg-white/5 backdrop-blur-lg border border-white/10 p-12 rounded-3xl text-center shadow-2xl" data-aos="zoom-in">
+<script>
+    const upiId = "9567497943@ibl";
+    const upiName = "Voizon Digital";
+    let clients = JSON.parse(localStorage.getItem('vds_clients')) || [];
 
-            <span class="text-amber-500 uppercase tracking-[0.3em] text-sm font-bold mb-4 block">Reservation</span>
-            <h3 class="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">Ready to Elevate Your Next Celebration?</h3>
-            <p class="text-gray-400 text-lg mb-10 max-w-2xl mx-auto leading-relaxed">
-                Experience the perfect blend of luxury and seamless planning. Our experts are ready to bring your vision to life with world-class standards.
-            </p>
+    window.onload = function() {
+        document.getElementById("currentDate").innerText = new Date().toLocaleDateString('en-IN');
 
-            <div class="flex flex-col md:flex-row items-center justify-center gap-6">
-                <a href="#booking" class="group relative inline-flex items-center justify-center px-10 py-4 font-bold text-white transition-all duration-300 bg-amber-500 hover:bg-amber-600 rounded-full shadow-[0_10px_20px_rgba(245,158,11,0.3)]">
-                    <span class="relative uppercase tracking-widest text-sm">Book Your Date</span>
-                    <i class="fas fa-calendar-alt ml-3 transition-transform group-hover:translate-x-1"></i>
-                </a>
+        let lastInvId = localStorage.getItem('vds_last_inv_id') || 100;
+        let nextInvId = parseInt(lastInvId) + 1;
+        document.getElementById("invId").innerText = "VDS-2026-" + nextInvId;
 
-                <a href="https://wa.me/91XXXXXXXXXX?text=Hi, I want to discuss a premium event"
-                   class="inline-flex items-center px-10 py-4 font-bold text-white border border-white/20 rounded-full hover:bg-white/10 transition-all duration-300 backdrop-blur-sm">
-                    <i class="fab fa-whatsapp mr-3 text-green-400"></i>
-                    <span class="uppercase tracking-widest text-sm">Consult an Expert</span>
-                </a>
-            </div>
+        updateClientDropdown();
+        updateHistoryTable();
+        updateCalculations();
+    };
 
-            <div class="mt-12 pt-10 border-t border-white/10 grid grid-cols-2 md:grid-cols-3 gap-6 opacity-60">
-                <div class="flex items-center justify-center space-x-2">
-                    <i class="fas fa-shield-alt text-amber-500"></i>
-                    <span class="text-xs text-white uppercase tracking-tighter">Verified Services</span>
-                </div>
-                <div class="flex items-center justify-center space-x-2">
-                    <i class="fas fa-star text-amber-500"></i>
-                    <span class="text-xs text-white uppercase tracking-tighter">5-Star Planning</span>
-                </div>
-                <div class="hidden md:flex items-center justify-center space-x-2">
-                    <i class="fas fa-clock text-amber-500"></i>
-                    <span class="text-xs text-white uppercase tracking-tighter">24/7 Support</span>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
+    function saveClient() {
+        const name = document.getElementById('clientName').value;
+        const address = document.getElementById('clientAddress').value;
+        if (!name || !address) return alert("ദയവായി പേരും അഡ്രസ്സും നൽകുക!");
+        if (clients.find(c => c.name === name)) return alert("ഈ ക്ലയന്റ് ലിസ്റ്റിൽ ഉണ്ട്!");
+        clients.push({ name, address });
+        localStorage.setItem('vds_clients', JSON.stringify(clients));
+        updateClientDropdown();
+        alert("ക്ലയന്റിനെ സേവ് ചെയ്തു!");
+    }
 
-    <footer id="contact" class="bg-gray-900 text-gray-300 py-20">
-    <div class="container mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-12">
-        <div>
-            <h1 class="text-2xl font-bold text-white mb-6">ELITE<span class="text-amber-500">EVENTS</span></h1>
-            <p class="mb-6 leading-relaxed">Defining the standards of luxury event management across the globe. From conceptualization to execution, we bring your dreams to life.</p>
-            <div class="flex space-x-4">
-                <a href="#" class="hover:text-amber-500 text-xl transition"><i class="fab fa-instagram"></i></a>
-                <a href="#" class="hover:text-amber-500 text-xl transition"><i class="fab fa-facebook"></i></a>
-                <a href="#" class="hover:text-amber-500 text-xl transition"><i class="fab fa-linkedin"></i></a>
-            </div>
-        </div>
+    function updateClientDropdown() {
+        const dropdown = document.getElementById('savedClients');
+        dropdown.innerHTML = '<option value="">Select Saved Client</option>';
+        clients.forEach((client, index) => {
+            const opt = document.createElement('option');
+            opt.value = index;
+            opt.innerText = client.name;
+            dropdown.appendChild(opt);
+        });
+    }
 
-        <div>
-            <h4 class="text-xl font-bold text-white mb-6">Get In Touch</h4>
-            <ul class="space-y-4">
-                <li class="flex items-start"><i class="fas fa-map-marker-alt mt-1 mr-4 text-amber-500"></i> Luxury Suite 402, Business Bay, Kochi</li>
-                <li class="flex items-center"><i class="fas fa-phone mr-4 text-amber-500"></i> +91 9745189745</li>
-                <li class="flex items-center"><i class="fas fa-envelope mr-4 text-amber-500"></i> hello@eliteevents.com</li>
-            </ul>
-        </div>
+    function loadClientData() {
+        const idx = document.getElementById('savedClients').value;
+        if (idx === "") return;
+        const selected = clients[idx];
+        document.getElementById('clientName').value = selected.name;
+        document.getElementById('clientAddress').value = selected.address;
+        document.getElementById('printName').innerText = selected.name;
+        document.getElementById('printAddr').innerText = selected.address;
+    }
 
-        <div>
-            <h4 class="text-xl font-bold text-white mb-6">Locate Us</h4>
-            <div class="w-full h-48 bg-gray-800 rounded-lg overflow-hidden grayscale hover:grayscale-0 transition duration-500">
-                <iframe src="https://www.google.com/maps/embed?pb=YOUR_GOOGLE_MAPS_EMBED_LINK" class="w-full h-full border-0" allowfullscreen="" loading="lazy"></iframe>
-            </div>
-        </div>
-    </div>
-    <div class="text-center mt-16 border-t border-gray-800 pt-8 text-sm">
-        &copy; 2026 Elite Events Management. All Rights Reserved.
-    </div>
-</footer>
+    function addItem() {
+        const service = document.getElementById("serviceType").value;
+        const qty = parseFloat(document.getElementById("qty").value) || 1;
+        const price = parseFloat(document.getElementById("price").value);
+        if(!price || price <= 0) return alert("ദയവായി കൃത്യമായ വില നൽകുക!");
 
+        addTableRow(service, qty, price);
+        updateCalculations();
+        document.getElementById("price").value = "";
+    }
+
+    // Table-ലേക്ക് റോ ചേർക്കാൻ പ്രത്യേക ഫങ്ക്ഷൻ (റീലോഡ് ചെയ്യുമ്പോൾ എളുപ്പമാക്കാൻ)
+    function addTableRow(service, qty, price) {
+        const total = qty * price;
+        const row = document.getElementById("invoiceBody").insertRow();
+        row.innerHTML = `
+            <td><strong>${service}</strong></td>
+            <td>${qty}</td>
+            <td>${parseFloat(price).toFixed(2)}</td>
+            <td class="row-total">${parseFloat(total).toFixed(2)}</td>
+            <td class="delete-btn"><button onclick="removeRow(this)" style="color:red; background:none; border:none; cursor:pointer; font-weight:bold;">✕</button></td>
+        `;
+    }
+
+    function removeRow(btn) {
+        btn.closest('tr').remove();
+        updateCalculations();
+    }
+
+    function updateCalculations() {
+        let currentSubtotal = 0;
+        document.querySelectorAll(".row-total").forEach(td => {
+            currentSubtotal += parseFloat(td.innerText) || 0;
+        });
+
+        const clientType = document.getElementById("clientType").value;
+        const docType = document.getElementById("docType").value;
+        const status = document.getElementById("invoiceStatus").value;
+        const discountPerc = parseFloat(document.getElementById("discountPerc").value) || 0;
+        const discountAmount = currentSubtotal * (discountPerc / 100);
+        const discountedBase = currentSubtotal - discountAmount;
+
+        document.getElementById("displayDocType").innerText = docType;
+        let taxHtml = "";
+        let finalTotal = 0;
+        let currencySym = (clientType === "kerala") ? "₹" : "$";
+
+        if (clientType === "kerala") {
+            const cgst = discountedBase * 0.09;
+            const sgst = discountedBase * 0.09;
+            finalTotal = discountedBase + cgst + sgst;
+            taxHtml = `CGST (9%): ₹${cgst.toLocaleString('en-IN', {minimumFractionDigits: 2})}<br>
+                       SGST (9%): ₹${sgst.toLocaleString('en-IN', {minimumFractionDigits: 2})}`;
+            document.getElementById("qr-container").style.display = "flex";
+        } else {
+            finalTotal = discountedBase;
+            taxHtml = "Export of Services (Zero Rated)";
+            document.getElementById("qr-container").style.display = "none";
+        }
+
+        document.getElementById("subtotal").innerText = currencySym + currentSubtotal.toLocaleString('en-IN', {minimumFractionDigits: 2});
+        document.getElementById("tax").innerHTML = taxHtml;
+        document.getElementById("grandTotal").innerText = currencySym + finalTotal.toLocaleString('en-IN', {minimumFractionDigits: 2});
+        document.getElementById("paidStamp").style.display = (status === "PAID") ? "block" : "none";
+
+        let words = "Total Amount in Words: " + (clientType === "kerala" ? "Indian Rupees " : "US Dollars ") + finalTotal.toFixed(2) + " Only";
+        document.getElementById("wordsContainer").innerText = words;
+
+        updateQR(finalTotal);
+    }
+
+    function updateQR(total) {
+        const amount = document.getElementById("clientType").value === "kerala" ? total.toFixed(2) : "0";
+        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=${upiId}&pn=${encodeURIComponent(upiName)}&am=${amount}&cu=INR`;
+        document.getElementById("qr_code").src = qrUrl;
+    }
+
+    function printInvoice() {
+        const name = document.getElementById("clientName").value;
+        if(!name) return alert("Client name നൽകൂ!");
+
+        let currentFullId = document.getElementById("invId").innerText;
+
+        // ഐറ്റംസ് എല്ലാം സേവ് ചെയ്യാൻ ഒരു അറേ ഉണ്ടാക്കുന്നു
+        let items = [];
+        document.querySelectorAll("#invoiceBody tr").forEach(row => {
+            items.push({
+                service: row.cells[0].innerText,
+                qty: row.cells[1].innerText,
+                price: row.cells[2].innerText
+            });
+        });
+
+        let history = JSON.parse(localStorage.getItem('vds_history')) || [];
+        history.push({
+            id: currentFullId,
+            name: name,
+            address: document.getElementById("clientAddress").value,
+            total: document.getElementById("grandTotal").innerText,
+            clientType: document.getElementById("clientType").value,
+            docType: document.getElementById("docType").value,
+            status: document.getElementById("invoiceStatus").value,
+            discount: document.getElementById("discountPerc").value,
+            items: items,
+            date: document.getElementById("currentDate").innerText
+        });
+
+        localStorage.setItem('vds_history', JSON.stringify(history));
+        localStorage.setItem('vds_last_inv_id', currentFullId.split('-').pop());
+
+        window.print();
+        updateHistoryTable();
+    }
+
+    function updateHistoryTable() {
+        let history = JSON.parse(localStorage.getItem('vds_history')) || [];
+        const tableBody = document.getElementById("recentInvoicesBody");
+        if(!tableBody) return;
+        tableBody.innerHTML = "";
+
+        // അവസാനം അടിച്ച 5 ബില്ലുകൾ കാണിക്കുന്നു
+        history.reverse().slice(0, 5).forEach((item, index) => {
+            const row = tableBody.insertRow();
+            // index കൃത്യമായി കിട്ടാൻ history.length ഉപയോഗിക്കുന്നു
+            const realIndex = history.length - 1 - index;
+            row.innerHTML = `
+                <td style="padding:5px;">${item.id}</td>
+                <td>${item.name}</td>
+                <td>${item.total}</td>
+                <td><button onclick="viewOldBill(${realIndex})" style="background:var(--accent); color:white; border:none; padding:3px 8px; border-radius:4px; cursor:pointer; font-size:10px;">View</button></td>
+            `;
+        });
+    }
+
+    function viewOldBill(index) {
+        let history = JSON.parse(localStorage.getItem('vds_history')) || [];
+        let bill = history[index];
+        if(!bill) return;
+
+        // ഡാറ്റാ ലോഡ് ചെയ്യുന്നു
+        document.getElementById("invId").innerText = bill.id;
+        document.getElementById("clientName").value = bill.name;
+        document.getElementById("clientAddress").value = bill.address;
+        document.getElementById("printName").innerText = bill.name;
+        document.getElementById("printAddr").innerText = bill.address;
+        document.getElementById("clientType").value = bill.clientType;
+        document.getElementById("docType").value = bill.docType;
+        document.getElementById("invoiceStatus").value = bill.status;
+        document.getElementById("discountPerc").value = bill.discount;
+        document.getElementById("currentDate").innerText = bill.date;
+
+        // ടേബിൾ ക്ലിയർ ചെയ്ത് ഐറ്റംസ് ആഡ് ചെയ്യുന്നു
+        document.getElementById("invoiceBody").innerHTML = "";
+        bill.items.forEach(item => {
+            addTableRow(item.service, item.qty, item.price);
+        });
+
+        updateCalculations();
+        alert("Bill " + bill.id + " loaded!");
+    }
+
+    function shareToWhatsApp() {
+        const name = document.getElementById("clientName").value;
+        const invId = document.getElementById("invId").innerText;
+        const total = document.getElementById("grandTotal").innerText;
+        const dueDate = document.getElementById("dueDate").value || "On Receipt";
+        const docType = document.getElementById("docType").value;
+
+        if (!name) return alert("ദയവായി ക്ലയന്റ് പേര് നൽകുക!");
+
+        const message = `*${docType} FROM VOIZON DIGITAL*%0A%0A` +
+                        `Hi ${name},%0A` +
+                        `Please find the details of your ${docType.toLowerCase()}:%0A%0A` +
+                        `*ID:* ${invId}%0A` +
+                        `*Total Amount:* ${total}%0A` +
+                        `*Due Date:* ${dueDate}%0A%0A` +
+                        `Please complete the payment to avoid service delays. Thank you for choosing Voizon Digital!`;
+
+        window.open(`https://wa.me/?text=${message}`, '_blank');
+    }
+</script>
 </body>
 </html>
