@@ -19,7 +19,7 @@
         border-radius: 15px;
         box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         position: relative;
-        overflow: hidden; /* Stamp purath pogaathirikkaan */
+        overflow: hidden;
     }
 
     /* Watermark */
@@ -37,7 +37,7 @@
 
     /* Professional PAID Stamp */
     #paidStamp {
-        display: none; /* JS vazhi mathram block aakkum */
+        display: none;
         position: absolute;
         top: 150px;
         right: 80px;
@@ -87,32 +87,93 @@
 
     .print-only { display: none; }
 
-    /* Print Specific Styling */
+    /* --- കറക്റ്റ് ചെയ്ത പ്രിന്റ് സെക്ഷൻ --- */
     @media print {
         body { background: white; padding: 0; }
         .invoice-wrapper { box-shadow: none; padding: 0; max-width: 100%; }
-        .controls, .btn-print, .delete-btn, .history-section, .btn, #savedClients { display: none !important; }
-        .print-only { display: block !important; }
 
-        input, select {
-            border: none !important;
-            background: transparent !important;
-            padding: 0 !important;
-            margin: 0 !important;
-            appearance: none;
-            -webkit-appearance: none;
-            color: #1e293b !important;
+        /* ബട്ടണുകളും അനാവശ്യ ബോക്സുകളും പ്രിന്റിൽ കാണിക്കില്ല */
+        .controls, .btn-print, .delete-btn, .history-section, .btn, #savedClients, input[type="text"], input[type="number"], select {
+            display: none !important;
         }
 
-        #invoiceStatus { font-weight: bold; color: var(--accent) !important; }
-        #dueDate { color: #ef4444 !important; font-weight: bold; }
-        .invoice-wrapper::after { color: rgba(0,0,0,0.03); }
+        /* പെയ്ഡ് സ്റ്റാറ്റസ് ബോക്സ് മാത്രം കാണിക്കണം എന്നുണ്ടെങ്കിൽ ഇത് */
+        #invoiceStatus { display: none !important; }
 
-        /* Paid Stamp print-ilum kaanan */
-        #paidStamp { opacity: 0.6; -webkit-print-color-adjust: exact; }
+        .print-only { display: block !important; margin-bottom: 5px; }
+
+        /* ടേബിൾ ലൈനുകൾ ഭംഗിയായി വരാൻ */
+        td, th { border-bottom: 1px solid #e2e8f0 !important; }
+
+        #paidStamp { opacity: 0.6; display: block; -webkit-print-color-adjust: exact; }
+        .invoice-wrapper::after { color: rgba(0,0,0,0.03); }
     }
+       /* --- Mobile Friendly CSS --- */
+@media (max-width: 768px) {
+    body { padding: 10px; }
+
+    .invoice-wrapper {
+        padding: 20px;
+        border-radius: 0; /* മൊബൈലിൽ ഫുൾ സ്ക്രീൻ ലുക്ക് കിട്ടാൻ */
+    }
+
+    .header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .header div {
+        text-align: center !important;
+        margin-bottom: 10px;
+    }
+
+    .brand img {
+        margin: 0 auto 10px auto;
+    }
+
+    .info-grid {
+        grid-template-columns: 1fr; /* രണ്ടു കോളത്തിന് പകരം ഒന്നാക്കുന്നു */
+        gap: 20px;
+    }
+
+    .info-box {
+        text-align: left !important;
+    }
+
+    .controls {
+        grid-template-columns: 1fr; /* ഇൻപുട്ട് ബോക്സുകൾ ഒന്നിന് താഴെ ഒന്നാക്കുന്നു */
+    }
+
+    .calc-area {
+        flex-direction: column;
+    }
+
+    .payment-info, .totals {
+        width: 100%;
+        text-align: left;
+    }
+
+    .totals {
+        margin-top: 20px;
+        border-top: 2px solid #e2e8f0;
+        padding-top: 20px;
+    }
+
+    /* ടേബിൾ മൊബൈലിൽ സ്ക്രോൾ ചെയ്യാൻ വേണ്ടി */
+    table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    #paidStamp {
+        top: 100px;
+        right: 20px;
+        font-size: 25px;
+    }
+}
 </style>
-    <body>
+  <body>
 
 <div class="invoice-wrapper">
     <div id="paidStamp">PAID</div>
@@ -132,34 +193,43 @@
             <h2 id="displayDocType">INVOICE</h2>
             <p>ID: <strong id="invId"></strong></p>
             <p>Date: <span id="currentDate"></span></p>
-            <p style="color: #ef4444; font-weight: bold;">Due: <input type="text" value="On Receipt" style="width: 80px; border: none; font-weight: bold; padding: 0; color: #ef4444; background: transparent; text-align: right;"></p>
+            <p style="color: #ef4444; font-weight: bold;">
+                Due: <span id="printDue" class="print-only">On Receipt</span>
+                <input type="text" id="headerDueInput" value="On Receipt" class="no-print"
+                       style="width: 80px; border: none; font-weight: bold; padding: 0; color: #ef4444; background: transparent; text-align: right;"
+                       oninput="document.getElementById('printDue').innerText = this.value">
+            </p>
         </div>
     </div>
 
     <div class="info-grid">
         <div class="info-box">
             <h4>Bill To:</h4>
-            <select id="savedClients" onchange="loadClientData()" style="background: #f1f5f9; border: 1px dashed var(--accent);">
+            <select id="savedClients" onchange="loadClientData()" class="no-print" style="background: #f1f5f9; border: 1px dashed var(--accent);">
                 <option value="">Select Saved Client</option>
             </select>
-            <div id="printName" class="print-only"></div>
-            <input type="text" id="clientName" placeholder="Client Name" oninput="document.getElementById('printName').innerText = this.value">
-            <div id="printAddr" class="print-only"></div>
-            <input type="text" id="clientAddress" placeholder="Client Address" oninput="document.getElementById('printAddr').innerText = this.value">
-            <button type="button" class="btn" onclick="saveClient()" style="padding: 5px 10px; font-size: 11px; background: #10b981; color: white; margin-bottom: 15px;">+ Save to Contacts</button>
+
+            <div id="printName" class="print-only" style="font-weight: bold; font-size: 1.1em; margin-bottom: 5px;"></div>
+            <div id="printAddr" class="print-only" style="white-space: pre-line;"></div>
+
+            <input type="text" id="clientName" placeholder="Client Name" class="no-print" oninput="document.getElementById('printName').innerText = this.value">
+            <textarea id="clientAddress" placeholder="Client Address" class="no-print" rows="2" style="width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:6px;" oninput="document.getElementById('printAddr').innerText = this.value"></textarea>
+
+            <button type="button" class="btn no-print" onclick="saveClient()" style="padding: 5px 10px; font-size: 11px; background: #10b981; color: white; margin-top: 10px; margin-bottom: 15px; border-radius: 4px; border: none; cursor: pointer;">+ Save to Contacts</button>
         </div>
         <div class="info-box" style="text-align: right;">
             <h4>Invoice Details:</h4>
-            <input type="text" id="dueDate" placeholder="Due Date (e.g. 25/03/2026)" style="text-align: right;">
-            <select id="invoiceStatus" onchange="updateCalculations()" style="text-align-last: right;">
+            <input type="text" id="dueDate" placeholder="Due Date (e.g. 25/03/2026)" class="no-print" style="text-align: right;">
+            <select id="invoiceStatus" onchange="updateCalculations()" class="no-print" style="text-align-last: right;">
                 <option value="UNPAID">Status: Pending</option>
                 <option value="PAID">Status: Paid</option>
                 <option value="PARTIAL">Status: Advance Received</option>
             </select>
+            <div id="printStatus" class="print-only" style="font-weight: bold; color: var(--accent);"></div>
         </div>
     </div>
 
-    <div class="controls">
+    <div class="controls no-print">
         <select id="clientType" onchange="updateCalculations()">
             <option value="kerala">Kerala Client (GST 18%)</option>
             <option value="foreign">Foreign Client (Export - 0% Tax)</option>
@@ -177,17 +247,20 @@
         <option value="Content Writing & Strategy">Content Writing & Strategy</option>
         <option value="Email Marketing Campaign">Email Marketing Campaign</option>
         <option value="Influencer Marketing Setup">Influencer Marketing Setup</option>
-        <option value="YouTube Channel Growth & Management">YouTube Channel Growth & Management</option>
+        <option value="YouTube Channel Growth & SEO">YouTube Channel Growth & SEO</option>
+        <option value="Digital PR & Guest Posting">Digital PR & Guest Posting</option>
     </optgroup>
 
     <optgroup label="Graphic Design & Branding">
         <option value="Professional Logo & Brand Identity">Professional Logo & Brand Identity</option>
         <option value="Social Media Poster Design">Social Media Poster Design</option>
         <option value="UI/UX Design (Mobile & Web)">UI/UX Design (Mobile & Web)</option>
+        <option value="Video Editing & Motion Graphics">Video Editing & Motion Graphics</option>
         <option value="Brochure & Business Card Design">Brochure & Business Card Design</option>
         <option value="Product Packaging Design">Product Packaging Design</option>
-        <option value="Video Editing & Motion Graphics">Video Editing & Motion Graphics</option>
         <option value="3D Modeling & Visualization">3D Modeling & Visualization</option>
+        <option value="Thumbnail & Presentation Design">Thumbnail & Presentation Design</option>
+        <option value="Character Design & Illustration">Character Design & Illustration</option>
     </optgroup>
 
     <optgroup label="Web & IT Services">
@@ -199,11 +272,12 @@
         <option value="Website Maintenance & Support">Website Maintenance & Support</option>
         <option value="Software License & Installation">Software License & Installation</option>
         <option value="IT Technical Support & Security">IT Technical Support & Security</option>
+        <option value="API Integration & Automations">API Integration & Automations</option>
     </optgroup>
 
     <optgroup label="Consultancy & Others">
         <option value="Digital Business Consultation">Digital Business Consultation</option>
-        <option value="Business Documentation & Presentation">Business Documentation & Presentation</option>
+        <option value="Business Documentation & PPT">Business Documentation & PPT</option>
         <option value="Google My Business (GMB) Setup">Google My Business (GMB) Setup</option>
     </optgroup>
 </select>
@@ -215,11 +289,11 @@
     <table>
         <thead>
             <tr>
-               <th>Description</th>
-<th>Unit/Qty</th>
-<th>Rate</th>
-<th>Total</th>
-                <th class="delete-btn"></th>
+                <th>Description</th>
+                <th>Unit/Qty</th>
+                <th>Rate</th>
+                <th>Total</th>
+                <th class="delete-btn no-print"></th>
             </tr>
         </thead>
         <tbody id="invoiceBody"></tbody>
@@ -249,7 +323,10 @@
 
         <div class="totals">
             <p>Subtotal: <span id="subtotal">₹0.00</span></p>
-            <p>Discount (%): <input type="number" id="discountPerc" value="0" oninput="updateCalculations()" style="width: 60px; padding: 5px;"></p>
+            <p>Discount (%):
+                <span id="printDisc" class="print-only">0%</span>
+                <input type="number" id="discountPerc" value="0" class="no-print" oninput="updateCalculations()" style="width: 60px; padding: 5px;">
+            </p>
             <p id="tax">GST (18%): ₹0.00</p>
             <p class="grand-total">Total: <span id="grandTotal">₹0.00</span></p>
             <div id="wordsContainer" style="font-size: 11px; color: var(--gray); font-style: italic; margin-top: 10px; text-align: right;"></div>
@@ -263,11 +340,11 @@
         <p style="margin: 2px 0;">3. Payment should be made within the due date.</p>
     </div>
 
-    <button class="btn btn-print" onclick="printInvoice()">Print / Save as PDF</button>
-    <button class="btn" onclick="shareToWhatsApp()" style="background: #25d366; color: white; width: 100%; margin-top: 10px; font-size: 16px;">Share to WhatsApp</button>
+    <button class="btn btn-print no-print" onclick="printInvoice()">Print / Save as PDF</button>
+    <button class="btn no-print" onclick="shareToWhatsApp()" style="background: #25d366; color: white; width: 100%; margin-top: 10px; font-size: 16px;">Share to WhatsApp</button>
 </div>
 
-<div class="invoice-wrapper history-section" style="margin-top: 20px; font-size: 13px;">
+<div class="invoice-wrapper history-section no-print" style="margin-top: 20px; font-size: 13px;">
     <h3>Recent Invoices</h3>
     <table style="width:100%; font-size: 12px; border-collapse: collapse;">
         <thead>
@@ -275,6 +352,7 @@
                 <th style="padding:10px;">Inv ID</th>
                 <th>Client</th>
                 <th>Total</th>
+                <th>Action</th>
             </tr>
         </thead>
         <tbody id="recentInvoicesBody"></tbody>
@@ -327,6 +405,7 @@
         const selected = clients[idx];
         document.getElementById('clientName').value = selected.name;
         document.getElementById('clientAddress').value = selected.address;
+        // പ്രിന്റ് ഡിവിഷനുകളിലേക്ക് ഡാറ്റ നൽകുന്നു
         document.getElementById('printName').innerText = selected.name;
         document.getElementById('printAddr').innerText = selected.address;
     }
@@ -342,7 +421,6 @@
         document.getElementById("price").value = "";
     }
 
-    // Table-ലേക്ക് റോ ചേർക്കാൻ പ്രത്യേക ഫങ്ക്ഷൻ (റീലോഡ് ചെയ്യുമ്പോൾ എളുപ്പമാക്കാൻ)
     function addTableRow(service, qty, price) {
         const total = qty * price;
         const row = document.getElementById("invoiceBody").insertRow();
@@ -351,7 +429,7 @@
             <td>${qty}</td>
             <td>${parseFloat(price).toFixed(2)}</td>
             <td class="row-total">${parseFloat(total).toFixed(2)}</td>
-            <td class="delete-btn"><button onclick="removeRow(this)" style="color:red; background:none; border:none; cursor:pointer; font-weight:bold;">✕</button></td>
+            <td class="delete-btn no-print"><button onclick="removeRow(this)" style="color:red; background:none; border:none; cursor:pointer; font-weight:bold;">✕</button></td>
         `;
     }
 
@@ -370,10 +448,16 @@
         const docType = document.getElementById("docType").value;
         const status = document.getElementById("invoiceStatus").value;
         const discountPerc = parseFloat(document.getElementById("discountPerc").value) || 0;
+
         const discountAmount = currentSubtotal * (discountPerc / 100);
         const discountedBase = currentSubtotal - discountAmount;
 
         document.getElementById("displayDocType").innerText = docType;
+        // പ്രിന്റ് ലേഔട്ടിലെ ഡിസ്‌കൗണ്ട് അപ്‌ഡേറ്റ് ചെയ്യുന്നു
+        if(document.getElementById("printDisc")) {
+            document.getElementById("printDisc").innerText = discountPerc + "%";
+        }
+
         let taxHtml = "";
         let finalTotal = 0;
         let currencySym = (clientType === "kerala") ? "₹" : "$";
@@ -394,7 +478,12 @@
         document.getElementById("subtotal").innerText = currencySym + currentSubtotal.toLocaleString('en-IN', {minimumFractionDigits: 2});
         document.getElementById("tax").innerHTML = taxHtml;
         document.getElementById("grandTotal").innerText = currencySym + finalTotal.toLocaleString('en-IN', {minimumFractionDigits: 2});
+
+        // പെയ്ഡ് സ്റ്റാമ്പ് & സ്റ്റാറ്റസ്
         document.getElementById("paidStamp").style.display = (status === "PAID") ? "block" : "none";
+        if(document.getElementById("printStatus")) {
+            document.getElementById("printStatus").innerText = "Status: " + status;
+        }
 
         let words = "Total Amount in Words: " + (clientType === "kerala" ? "Indian Rupees " : "US Dollars ") + finalTotal.toFixed(2) + " Only";
         document.getElementById("wordsContainer").innerText = words;
@@ -413,8 +502,6 @@
         if(!name) return alert("Client name നൽകൂ!");
 
         let currentFullId = document.getElementById("invId").innerText;
-
-        // ഐറ്റംസ് എല്ലാം സേവ് ചെയ്യാൻ ഒരു അറേ ഉണ്ടാക്കുന്നു
         let items = [];
         document.querySelectorAll("#invoiceBody tr").forEach(row => {
             items.push({
@@ -434,6 +521,7 @@
             docType: document.getElementById("docType").value,
             status: document.getElementById("invoiceStatus").value,
             discount: document.getElementById("discountPerc").value,
+            dueDate: document.getElementById("headerDueInput").value, // ഹെഡറിലെ ഡ്യൂ ഡേറ്റ്
             items: items,
             date: document.getElementById("currentDate").innerText
         });
@@ -451,10 +539,8 @@
         if(!tableBody) return;
         tableBody.innerHTML = "";
 
-        // അവസാനം അടിച്ച 5 ബില്ലുകൾ കാണിക്കുന്നു
-        history.reverse().slice(0, 5).forEach((item, index) => {
+        history.slice().reverse().slice(0, 5).forEach((item, index) => {
             const row = tableBody.insertRow();
-            // index കൃത്യമായി കിട്ടാൻ history.length ഉപയോഗിക്കുന്നു
             const realIndex = history.length - 1 - index;
             row.innerHTML = `
                 <td style="padding:5px;">${item.id}</td>
@@ -470,7 +556,6 @@
         let bill = history[index];
         if(!bill) return;
 
-        // ഡാറ്റാ ലോഡ് ചെയ്യുന്നു
         document.getElementById("invId").innerText = bill.id;
         document.getElementById("clientName").value = bill.name;
         document.getElementById("clientAddress").value = bill.address;
@@ -482,7 +567,12 @@
         document.getElementById("discountPerc").value = bill.discount;
         document.getElementById("currentDate").innerText = bill.date;
 
-        // ടേബിൾ ക്ലിയർ ചെയ്ത് ഐറ്റംസ് ആഡ് ചെയ്യുന്നു
+        // ഹെഡറിലെ ഡ്യൂ ഡേറ്റ് റീലോഡ് ചെയ്യുന്നു
+        if(bill.dueDate) {
+            document.getElementById("headerDueInput").value = bill.dueDate;
+            document.getElementById("printDue").innerText = bill.dueDate;
+        }
+
         document.getElementById("invoiceBody").innerHTML = "";
         bill.items.forEach(item => {
             addTableRow(item.service, item.qty, item.price);
@@ -496,7 +586,7 @@
         const name = document.getElementById("clientName").value;
         const invId = document.getElementById("invId").innerText;
         const total = document.getElementById("grandTotal").innerText;
-        const dueDate = document.getElementById("dueDate").value || "On Receipt";
+        const dueDate = document.getElementById("headerDueInput").value || "On Receipt";
         const docType = document.getElementById("docType").value;
 
         if (!name) return alert("ദയവായി ക്ലയന്റ് പേര് നൽകുക!");
